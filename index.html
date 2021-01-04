@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ES6 v3</title>
+</head>
+<body>
+    <script>
+        
+        const toDoList = {
+            _notes: function() {
+                if (localStorage['notes']) {
+                    this._notes = JSON.parse(localStorage.getItem('notes'));
+                } else {
+                    this._notes = [];
+                }
+            },
+            
+            createNote(text, id = Date.now()) {
+                const newNote = {
+                    text,
+                    id,
+                    status: false,
+                };
+
+                this._notes.push(newNote);
+                this._saveToLS();
+
+                return newNote;
+            },
+
+            deleteNote(id) {
+                const index = this._findNoteByID(id);
+
+                if (index >= 0) {
+                    const deleted = this._notes.splice(index, 1);
+                    this._saveToLS();
+                    return deleted;
+                }
+            },
+
+            editNote(id, editedText) {
+                const index = this._findNoteByID(id);
+
+                if (index >= 0 && editedText) {
+                    this._notes[index].text = editedText;
+                    this._saveToLS();
+                }
+                
+                return this._notes[index];
+            },
+
+            changeStatus(id) {
+                const index = this._findNoteByID(id);
+
+                if (index >= 0) {
+                    this._notes[index].status = true;
+                    this._saveToLS();
+                }
+
+                return this._notes[index];
+            },
+
+            _findNoteByID(id) {
+                return this._notes.findIndex((note) => note.id === id);
+            },
+
+            _saveToLS() {
+                localStorage.setItem('notes', JSON.stringify(this._notes));
+            },
+        };
+
+        Object.freeze(toDoList);
+
+        toDoList.createNote('drink some tea', 12);
+        toDoList.createNote('make my homework', 13);
+        toDoList.createNote('relax', 14);
+        toDoList.createNote('earn money', 15);
+        
+    </script>
+</body>
+</html>
